@@ -8,9 +8,10 @@
 
 ## Project Setup
 
-- Fork, clone, and `npm install`.
-- Build your database executing `npm run migrate`.
-- Run tests locally executing `npm test`.
+[x] Fork, clone, and `npm install`.
+
+[x] Build your database executing `npm run migrate`.
+[x] Run tests locally executing `npm test`.
 
 ## Project Instructions
 
