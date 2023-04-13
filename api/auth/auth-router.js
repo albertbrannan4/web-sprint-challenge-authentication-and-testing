@@ -2,7 +2,7 @@ const router = require("express").Router();
 const db = require("../../data/dbConfig");
 const bcrypt = require("bcryptjs");
 
-router.post("/register", async (req, res) => {
+router.post("/register", async (req, res, next) => {
   // res.end("implement register, please!");
   /*
     IMPLEMENT
@@ -32,7 +32,9 @@ router.post("/register", async (req, res) => {
   try {
     let { username, password } = req.body;
     const hash = bcrypt.hashSync(password, 8);
-    res.json({ username: username, password: hash });
+    const [newUserId] = await db("users").insert({ username, password: hash });
+    const [newlyCreateUser] = await db("users").where("id", newUserId);
+    res.status(201).json(newlyCreateUser);
   } catch (err) {
     res.json({ status: 500, message: err });
   }
