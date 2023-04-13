@@ -70,7 +70,8 @@ router.post("/login", async (req, res) => {
     const { username, password } = req.body;
     const [user] = await db("users").where("username", username);
     if (user && bcrypt.compareSync(password, user.password)) {
-      res.json("exists");
+      const token = buildToken(user);
+      res.json(token);
     } else {
       res.json("invalid credentials");
     }
