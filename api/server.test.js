@@ -2,7 +2,7 @@ const db = require("../data/dbConfig");
 const request = require("supertest");
 const server = require("./server");
 const bcrypt = require("bcryptjs");
-const e = require("express");
+
 beforeEach(async () => {
   await db.migrate.rollback();
   await db.migrate.latest();
@@ -31,4 +31,15 @@ describe("[POST]  api/auth/register", () => {
   });
 
   test.todo("register uses bcrypt to authenticate the password");
+});
+
+describe("[POST] api/auth/login", () => {
+  const newUser = {
+    username: "Captain Marvel",
+    password: "foobar",
+  };
+
+  test.todo("must provide a username and password to login");
+  test.todo("on SUCCESSFUL login the body should contain token and message");
+  test.todo("on failed login message is username and password required");
 });
