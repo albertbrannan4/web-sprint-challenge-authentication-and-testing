@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const db = require("../../data/dbConfig");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 router.post("/register", async (req, res) => {
   // res.end("implement register, please!");
@@ -66,8 +67,8 @@ router.post("/login", async (req, res) => {
   */
   try {
     const { username, password } = req.body;
-    const [userExists] = await db("users").where("username", username);
-    if (userExists) {
+    const [user] = await db("users").where("username", username);
+    if (user && bcrypt.compareSync(password, user.password)) {
       res.json("exists");
     } else {
       res.json("invalid credentials");
@@ -76,5 +77,17 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "something went wrong logging in" });
   }
 });
+
+function buildToken(user) {
+  const payload = {
+    subject: user.user_id,
+    username: user.username,
+    role_name: user.role_name,
+  };
+  const options = {
+    expiresIn: "1d",
+  };
+  return jwt.sign(payload, JWT_SECRET, options);
+}
 
 module.exports = router;
