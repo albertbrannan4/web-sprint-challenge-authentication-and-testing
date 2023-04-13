@@ -1,7 +1,7 @@
 const db = require("../data/dbConfig");
 const request = require("supertest");
 const server = require("./server");
-const bcrypt = require("bcryptjs");
+const jokesData = require("./jokes/jokes-data");
 
 beforeEach(async () => {
   await db.migrate.rollback();
@@ -65,16 +65,14 @@ describe("[GET] /api/jokes", () => {
     const loginRes = await request(server)
       .post("/api/auth/login")
       .send(newUser);
-    const token = loginRes.body.token;
-    const jokesResponse = await request(server).get("/api/jokes");
+    const authToken = loginRes.body.token;
+    const jokesResponse = await request(server)
+      .get("/api/jokes")
+      .set("Authorization", `${authToken}`);
 
-    // const url = 'https://example.com/api/data';
-    // const headers = {
-    //   'Authorization': 'Bearer YOUR_ACCESS_TOKEN_HERE',
-    //   'Content-Type': 'application/json'
-    // };
-    // const response = await fetch(url, { headers });
-    // const data = await response.json();
-    // expect(data).toBeDefined();
+    expect(jokesResponse.body).toHaveLength(3);
+    expect(jokesResponse.body[0].joke).toBe(jokesData[0].joke);
+    expect(jokesResponse.body[1].joke).toBe(jokesData[1].joke);
+    expect(jokesResponse.body[2].joke).toBe(jokesData[2].joke);
   });
 });
