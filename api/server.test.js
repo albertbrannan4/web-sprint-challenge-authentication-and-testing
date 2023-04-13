@@ -29,17 +29,32 @@ describe("[POST]  api/auth/register", () => {
     expect(res.body).toMatchObject({ username: "foo" });
     expect(res.body.password !== undefined).toBe(true);
   });
-
-  // test.todo("register uses bcrypt to authenticate the password");
 });
 
-// describe("[POST] api/auth/login", () => {
-//   const newUser = {
-//     username: "Captain Marvel",
-//     password: "foobar",
-//   };
+describe("[POST] api/auth/login", () => {
+  const newUser = {
+    username: "Captain Marvel",
+    password: "foobar",
+  };
 
-//   test.todo("must provide a username and password to login");
-//   test.todo("on SUCCESSFUL login the body should contain token and message");
-//   test.todo("on failed login message is username and password required");
-// });
+  test("must provide a username and password to login", async () => {
+    const res = await request(server)
+      .post("/api/auth/login")
+      .send({ username: newUser.username });
+    expect(res.body.message).toBe("username and password required");
+  });
+  test("on SUCCESSFUL login the body should contain token and message", async () => {
+    await request(server).post("/api/auth/register").send(newUser);
+    const res = await request(server).post("/api/auth/login").send(newUser);
+    expect(res.body.message).toBe(`welcome, ${newUser.username}`);
+    expect(res.body.token !== undefined).toBe(true);
+  });
+});
+
+describe("[GET] /api/jokes", () => {
+  test("endpoint is restricted without Authorization", async () => {
+    const res = await request(server).get("/api/jokes");
+    expect(res.body.message).toBe("token required");
+  });
+  test.todo("with authorization token you receive the jokes");
+});
