@@ -30,16 +30,16 @@ describe("[POST]  api/auth/register", () => {
     expect(res.body.password !== undefined).toBe(true);
   });
 
-  test.todo("register uses bcrypt to authenticate the password");
+  // test.todo("register uses bcrypt to authenticate the password");
 });
 
-describe("[POST] api/auth/login", () => {
-  const newUser = {
-    username: "Captain Marvel",
-    password: "foobar",
-  };
+// describe("[POST] api/auth/login", () => {
+//   const newUser = {
+//     username: "Captain Marvel",
+//     password: "foobar",
+//   };
 
-  test.todo("must provide a username and password to login");
-  test.todo("on SUCCESSFUL login the body should contain token and message");
-  test.todo("on failed login message is username and password required");
-});
+//   test.todo("must provide a username and password to login");
+//   test.todo("on SUCCESSFUL login the body should contain token and message");
+//   test.todo("on failed login message is username and password required");
+// });
