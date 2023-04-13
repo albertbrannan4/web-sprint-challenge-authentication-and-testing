@@ -1,3 +1,5 @@
+const db = require("../../data/dbConfig");
+
 const credentialsRequired = async (req, res, next) => {
   const { username, password } = req.body;
 
@@ -7,4 +9,14 @@ const credentialsRequired = async (req, res, next) => {
     next();
   }
 };
-module.exports = { credentialsRequired };
+
+const usernameAvailable = async (req, res, next) => {
+  const { username } = req.body;
+  const [isAvailable] = await db("users").where("username", username);
+  if (isAvailable) {
+    res.status(401).json({ message: "username taken" });
+  } else {
+    next();
+  }
+};
+module.exports = { credentialsRequired, usernameAvailable };

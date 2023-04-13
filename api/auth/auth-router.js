@@ -3,11 +3,18 @@ const db = require("../../data/dbConfig");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET, BCRYPT_ROUNDS } = require("../../secrets");
-const { credentialsRequired } = require("../middleware/auth-middleware");
+const {
+  credentialsRequired,
+  usernameAvailable,
+} = require("../middleware/auth-middleware");
 
-router.post("/register", credentialsRequired, async (req, res) => {
-  // res.end("implement register, please!");
-  /*
+router.post(
+  "/register",
+  credentialsRequired,
+  usernameAvailable,
+  async (req, res) => {
+    // res.end("implement register, please!");
+    /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
     DO NOT EXCEED 2^8 ROUNDS OF HASHING!
@@ -32,16 +39,20 @@ router.post("/register", credentialsRequired, async (req, res) => {
     4- On FAILED registration due to the `username` being taken,
       the response body should include a string exactly as follows: "username taken".
   */
-  try {
-    let { username, password } = req.body;
-    const hash = bcrypt.hashSync(password, BCRYPT_ROUNDS);
-    const [newUserId] = await db("users").insert({ username, password: hash });
-    const [newlyCreateUser] = await db("users").where("id", newUserId);
-    res.status(201).json(newlyCreateUser);
-  } catch (err) {
-    res.json({ status: 500, message: err });
+    try {
+      let { username, password } = req.body;
+      const hash = bcrypt.hashSync(password, BCRYPT_ROUNDS);
+      const [newUserId] = await db("users").insert({
+        username,
+        password: hash,
+      });
+      const [newlyCreateUser] = await db("users").where("id", newUserId);
+      res.status(201).json(newlyCreateUser);
+    } catch (err) {
+      res.json({ status: 500, message: err });
+    }
   }
-});
+);
 
 router.post("/login", credentialsRequired, async (req, res) => {
   /*
