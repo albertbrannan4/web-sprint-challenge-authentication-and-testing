@@ -2,6 +2,7 @@ const router = require("express").Router();
 const db = require("../../data/dbConfig");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { JWT_SECRET, BCRYPT_ROUNDS } = require("../../secrets");
 
 router.post("/register", async (req, res) => {
   // res.end("implement register, please!");
@@ -32,7 +33,7 @@ router.post("/register", async (req, res) => {
   */
   try {
     let { username, password } = req.body;
-    const hash = bcrypt.hashSync(password, 8);
+    const hash = bcrypt.hashSync(password, BCRYPT_ROUNDS);
     const [newUserId] = await db("users").insert({ username, password: hash });
     const [newlyCreateUser] = await db("users").where("id", newUserId);
     res.status(201).json(newlyCreateUser);
@@ -80,9 +81,8 @@ router.post("/login", async (req, res) => {
 
 function buildToken(user) {
   const payload = {
-    subject: user.user_id,
+    subject: user.id,
     username: user.username,
-    role_name: user.role_name,
   };
   const options = {
     expiresIn: "1d",
