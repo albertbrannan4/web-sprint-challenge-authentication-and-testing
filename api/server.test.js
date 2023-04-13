@@ -52,9 +52,29 @@ describe("[POST] api/auth/login", () => {
 });
 
 describe("[GET] /api/jokes", () => {
+  const newUser = {
+    username: "Captain Marvel",
+    password: "foobar",
+  };
   test("endpoint is restricted without Authorization", async () => {
     const res = await request(server).get("/api/jokes");
     expect(res.body.message).toBe("token required");
   });
-  test.todo("with authorization token you receive the jokes");
+  test("with authorization token you receive the jokes", async () => {
+    await request(server).post("/api/auth/register").send(newUser);
+    const loginRes = await request(server)
+      .post("/api/auth/login")
+      .send(newUser);
+    const token = loginRes.body.token;
+    const jokesResponse = await request(server).get("/api/jokes");
+
+    // const url = 'https://example.com/api/data';
+    // const headers = {
+    //   'Authorization': 'Bearer YOUR_ACCESS_TOKEN_HERE',
+    //   'Content-Type': 'application/json'
+    // };
+    // const response = await fetch(url, { headers });
+    // const data = await response.json();
+    // expect(data).toBeDefined();
+  });
 });
