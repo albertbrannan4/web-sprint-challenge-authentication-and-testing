@@ -3,8 +3,9 @@ const db = require("../../data/dbConfig");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET, BCRYPT_ROUNDS } = require("../../secrets");
+const { credentialsRequired } = require("../middleware/auth-middleware");
 
-router.post("/register", async (req, res) => {
+router.post("/register", credentialsRequired, async (req, res) => {
   // res.end("implement register, please!");
   /*
     IMPLEMENT
@@ -42,7 +43,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", credentialsRequired, async (req, res) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -73,7 +74,7 @@ router.post("/login", async (req, res) => {
       const token = buildToken(user);
       res.json({ message: `welcome, ${user.username}`, token });
     } else {
-      res.json("invalid credentials");
+      res.status(401).json({ message: "invalid credentials" });
     }
   } catch (err) {
     res.status(500).json({ message: "something went wrong logging in" });
